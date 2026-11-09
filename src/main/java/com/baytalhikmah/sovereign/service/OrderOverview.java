@@ -27,10 +27,31 @@ public class OrderOverview {
                 order by o.orderNumber""", PurchaseOrder.class)
             .setParameter("domain", "%" + emailDomain)
             .getResultList();
-        return orders.stream()
-            .map(order -> order.getOrderNumber() + " | " + order.getCustomer().getFullName()
-                + " | " + order.getLines().size() + " lines")
-            .toList();
+        return orders.stream().map(OrderOverview::describe).toList();
+    }
+
+    /** The same overview from one query: customers and lines arrive together with the orders. */
+    @Transactional(readOnly = true)
+    public List<String> joinFetchOverview(String emailDomain) {
+        return ordersWithCustomerAndLines(emailDomain).stream().map(OrderOverview::describe).toList();
+    }
+
+    /** Orders with their customer and lines already loaded, so they can be used after the transaction. */
+    @Transactional(readOnly = true)
+    public List<PurchaseOrder> ordersWithCustomerAndLines(String emailDomain) {
+        return entityManager.createQuery("""
+                select o from PurchaseOrder o
+                join fetch o.customer c
+                join fetch o.lines
+                where c.email like :domain
+                order by o.orderNumber""", PurchaseOrder.class)
+            .setParameter("domain", "%" + emailDomain)
+            .getResultList();
+    }
+
+    static String describe(PurchaseOrder order) {
+        return order.getOrderNumber() + " | " + order.getCustomer().getFullName()
+            + " | " + order.getLines().size() + " lines";
     }
 
 }
