@@ -8,3 +8,6 @@ spring:
       authentication: APPROLE
   datasource:
     url: jdbc:postgresql://localhost:5432/sovereign
+  jpa:
+    hibernate:
+      ddl-auto: update

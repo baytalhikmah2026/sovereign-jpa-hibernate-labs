@@ -8,6 +8,9 @@ services:
       POSTGRES_PASSWORD: local-admin-only
     ports:
       - "127.0.0.1:5432:5432"
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./snapshots:/snapshots
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "sovereign_admin", "-d", "sovereign"]
       interval: 5s

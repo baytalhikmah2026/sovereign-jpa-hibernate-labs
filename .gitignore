@@ -34,3 +34,6 @@ build/
 
 ### Local secrets (written by scripts/vault-init.sh) ###
 /config/
+
+### Database snapshots (written by scripts/db-snapshot.sh) ###
+/snapshots/
