@@ -1,8 +1,11 @@
 package com.baytalhikmah.sovereign.domain;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
+import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.generator.EventType;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -39,6 +42,11 @@ public class OrderLine {
     @AttributeOverride(name = "currency", column = @Column(name = "unit_price_currency", length = 3, nullable = false))
     private Money unitPrice;
 
+    @Generated(event = { EventType.INSERT, EventType.UPDATE })
+    @Column(insertable = false, updatable = false,
+            columnDefinition = "numeric(12,2) generated always as (quantity * unit_price_amount) virtual")
+    private BigDecimal lineTotalAmount;
+
     protected OrderLine() {
     }
 
@@ -55,6 +63,10 @@ public class OrderLine {
 
     public Money lineTotal() {
         return unitPrice.times(quantity);
+    }
+
+    public BigDecimal getLineTotalAmount() {
+        return lineTotalAmount;
     }
 
     public UUID getId() {

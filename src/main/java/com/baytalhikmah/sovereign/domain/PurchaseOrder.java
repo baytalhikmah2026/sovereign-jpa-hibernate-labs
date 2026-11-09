@@ -1,11 +1,15 @@
 package com.baytalhikmah.sovereign.domain;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.generator.EventType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,6 +40,11 @@ public class PurchaseOrder {
 
     @Column(nullable = false, length = 2)
     private OrderStatus status = OrderStatus.NEW;
+
+    @ColumnDefault("current_timestamp")
+    @Generated(event = EventType.INSERT)
+    @Column(nullable = false, updatable = false)
+    private Instant placedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> lines = new ArrayList<>();
@@ -84,6 +93,10 @@ public class PurchaseOrder {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public Instant getPlacedAt() {
+        return placedAt;
     }
 
     public OrderStatus getStatus() {
