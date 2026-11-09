@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: vault://
+  cloud:
+    vault:
+      enabled: true
+      uri: http://localhost:8200
+      authentication: APPROLE
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sovereign

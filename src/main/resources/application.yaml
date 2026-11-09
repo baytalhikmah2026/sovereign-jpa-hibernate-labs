@@ -1,6 +1,8 @@
 spring:
   application:
     name: sovereign-persistence
+  config:
+    import: optional:file:./config/vault-approle.yaml
   datasource:
     hikari:
       pool-name: SovereignPool
@@ -9,6 +11,9 @@ spring:
       connection-timeout: 3000
       max-lifetime: 1800000
       leak-detection-threshold: 2000
+  cloud:
+    vault:
+      enabled: false
   jpa:
     open-in-view: false
     hibernate:

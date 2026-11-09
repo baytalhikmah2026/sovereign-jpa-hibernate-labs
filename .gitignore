@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets (written by scripts/vault-init.sh) ###
+/config/

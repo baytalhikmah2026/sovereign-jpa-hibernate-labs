@@ -1,0 +1,26 @@
+services:
+
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg18
+    environment:
+      POSTGRES_DB: sovereign
+      POSTGRES_USER: sovereign_admin
+      POSTGRES_PASSWORD: local-admin-only
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "sovereign_admin", "-d", "sovereign"]
+      interval: 5s
+      retries: 10
+
+  vault:
+    image: hashicorp/vault:2.2.1
+    command: server -dev
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: local-root-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "127.0.0.1:8200:8200"
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./config:/config
