@@ -30,8 +30,8 @@ class ConnectionPoolTest {
     PrometheusMeterRegistry prometheus;
 
     @Test
-    void poolFollowsTheLittlesLawPlan() {
-        HikariDataSource pool = (HikariDataSource) dataSource;
+    void poolFollowsTheLittlesLawPlan() throws Exception {
+        HikariDataSource pool = dataSource.unwrap(HikariDataSource.class);
 
         System.out.println("=== CONNECTION POOL ===");
         System.out.println("Pool name       : " + pool.getPoolName());
