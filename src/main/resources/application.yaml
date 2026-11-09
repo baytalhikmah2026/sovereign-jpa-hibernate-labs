@@ -24,6 +24,10 @@ spring:
     defer-datasource-initialization: true
     open-in-view: false
     properties:
+      jakarta:
+        persistence:
+          query:
+            timeout: 5000
       hibernate:
         jdbc:
           batch_size: 50
