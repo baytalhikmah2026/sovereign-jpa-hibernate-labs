@@ -31,12 +31,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
 @SqlResultSetMapping(name = "ProductSales", classes = @ConstructorResult(
         targetClass = ProductSales.class,
         columns = {
