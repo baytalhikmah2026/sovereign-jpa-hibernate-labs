@@ -14,13 +14,18 @@ import com.baytalhikmah.sovereign.persistence.ProductSpecsConverter;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -59,6 +64,13 @@ public class Product {
     @ColumnTransformer(write = "?::vector")
     @Column(columnDefinition = "vector(3)")
     private float[] embedding;
+
+    @ElementCollection
+    @CollectionTable(name = "product_image", joinColumns = @JoinColumn(name = "product_id"),
+            indexes = @Index(name = "sov_product_image_by_product", columnList = "product_id"))
+    @OrderColumn(name = "position")
+    @Column(name = "image_url", nullable = false, length = 300)
+    private List<String> imageUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategoryLink> categoryLinks = new ArrayList<>();
@@ -103,6 +115,18 @@ public class Product {
     public void updateCatalogueData(ProductSpecs newSpecs, float[] newEmbedding) {
         this.specs = newSpecs;
         this.embedding = newEmbedding == null ? null : Arrays.copyOf(newEmbedding, newEmbedding.length);
+    }
+
+    public void addImage(String imageUrl) {
+        imageUrls.add(imageUrl);
+    }
+
+    public void removeImage(String imageUrl) {
+        imageUrls.remove(imageUrl);
+    }
+
+    public List<String> getImageUrls() {
+        return Collections.unmodifiableList(imageUrls);
     }
 
     public ProductCategoryLink addToCategory(ProductCategory category, boolean primary, int displayOrder) {
