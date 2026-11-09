@@ -11,11 +11,18 @@ spring:
       connection-timeout: 3000
       max-lifetime: 1800000
       leak-detection-threshold: 2000
+      data-source-properties:
+        reWriteBatchedInserts: true
   cloud:
     vault:
       enabled: false
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
     hibernate:
       ddl-auto: create-drop
       naming:
