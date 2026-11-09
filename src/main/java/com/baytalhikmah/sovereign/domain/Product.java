@@ -1,5 +1,6 @@
 package com.baytalhikmah.sovereign.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,11 +12,14 @@ import org.hibernate.annotations.UuidGenerator;
 
 import com.baytalhikmah.sovereign.persistence.EmbeddingConverter;
 import com.baytalhikmah.sovereign.persistence.ProductSpecsConverter;
+import com.baytalhikmah.sovereign.query.ProductSales;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -26,12 +30,21 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderColumn;
+import jakarta.persistence.SqlResultSetMapping;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@SqlResultSetMapping(name = "ProductSales", classes = @ConstructorResult(
+        targetClass = ProductSales.class,
+        columns = {
+            @ColumnResult(name = "sku"),
+            @ColumnResult(name = "name"),
+            @ColumnResult(name = "units", type = Long.class),
+            @ColumnResult(name = "revenue", type = BigDecimal.class),
+            @ColumnResult(name = "orders") }))
 public class Product {
 
     @Id
