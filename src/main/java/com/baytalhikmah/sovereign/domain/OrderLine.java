@@ -14,11 +14,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "sov_order_line_by_order", columnList = "order_id"),
+        @Index(name = "sov_order_line_by_product", columnList = "product_id") })
 public class OrderLine {
 
     @Id

@@ -3,12 +3,15 @@ package com.baytalhikmah.sovereign.domain;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
+@Table(indexes = @Index(name = "sov_product_category_link_by_product", columnList = "product_id"))
 public class ProductCategoryLink {
 
     @EmbeddedId
