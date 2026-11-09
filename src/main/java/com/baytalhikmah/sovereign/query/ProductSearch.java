@@ -7,8 +7,9 @@ import java.util.Locale;
 
 import org.springframework.stereotype.Repository;
 
-import com.baytalhikmah.sovereign.domain.Money;
+import com.baytalhikmah.sovereign.domain.Money_;
 import com.baytalhikmah.sovereign.domain.Product;
+import com.baytalhikmah.sovereign.domain.Product_;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -29,9 +30,9 @@ public class ProductSearch {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = cb.createTupleQuery();
         Root<Product> product = query.from(Product.class);
-        Path<String> sku = product.<String>get("sku");
-        Path<String> name = product.<String>get("name");
-        Path<BigDecimal> price = product.<Money>get("price").<BigDecimal>get("amount");
+        Path<String> sku = product.get(Product_.sku);
+        Path<String> name = product.get(Product_.name);
+        Path<BigDecimal> price = product.get(Product_.price).get(Money_.amount);
 
         List<Predicate> where = new ArrayList<>();
         if (filter.skuPrefix() != null) {
