@@ -4,10 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.NamedStoredProcedureQuery;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @IdClass(InventoryItemId.class)
+@NamedStoredProcedureQuery(name = "InventoryItem.restock", procedureName = "sov_restock", parameters = {
+        @StoredProcedureParameter(name = "p_warehouse_code", mode = ParameterMode.IN, type = String.class),
+        @StoredProcedureParameter(name = "p_sku", mode = ParameterMode.IN, type = String.class),
+        @StoredProcedureParameter(name = "p_quantity", mode = ParameterMode.IN, type = Integer.class) })
 public class InventoryItem {
 
     @Id

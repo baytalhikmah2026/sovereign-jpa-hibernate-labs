@@ -16,7 +16,12 @@ spring:
   cloud:
     vault:
       enabled: false
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/functions.sql
   jpa:
+    defer-datasource-initialization: true
     open-in-view: false
     properties:
       hibernate:
