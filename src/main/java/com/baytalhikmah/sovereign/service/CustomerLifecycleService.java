@@ -1,5 +1,7 @@
 package com.baytalhikmah.sovereign.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,7 @@ public class CustomerLifecycleService {
     }
 
     @Transactional(readOnly = true)
-    public boolean loadTwiceFromSameContext(Long id) {
+    public boolean loadTwiceFromSameContext(UUID id) {
         Customer first = entityManager.find(Customer.class, id);
         Customer second = entityManager.find(Customer.class, id);
         return first == second;
@@ -39,14 +41,14 @@ public class CustomerLifecycleService {
     }
 
     @Transactional
-    public void remove(Long id) {
+    public void remove(UUID id) {
         Customer customer = entityManager.find(Customer.class, id);
         entityManager.remove(customer);
         System.out.println("[REMOVED]  managed? " + entityManager.contains(customer));
     }
 
     @Transactional(readOnly = true)
-    public Customer findById(Long id) {
+    public Customer findById(UUID id) {
         return entityManager.find(Customer.class, id);
     }
 

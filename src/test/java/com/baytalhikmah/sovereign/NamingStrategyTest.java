@@ -36,7 +36,7 @@ class NamingStrategyTest {
 
         assertThat(tables).containsExactly("sov_customer");
         assertThat(columns).containsExactly("email", "full_name", "id");
-        assertThat(sequences).containsExactly("sov_customer_seq");
+        assertThat(sequences).isEmpty();
     }
 
 }
