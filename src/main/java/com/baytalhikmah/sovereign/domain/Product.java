@@ -1,15 +1,21 @@
 package com.baytalhikmah.sovereign.domain;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.UuidGenerator;
+
+import com.baytalhikmah.sovereign.persistence.EmbeddingConverter;
+import com.baytalhikmah.sovereign.persistence.ProductSpecsConverter;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,6 +50,16 @@ public class Product {
     @AttributeOverride(name = "currency", column = @Column(name = "price_currency", length = 3, nullable = false))
     private Money price;
 
+    @Convert(converter = ProductSpecsConverter.class)
+    @ColumnTransformer(write = "?::jsonb")
+    @Column(columnDefinition = "jsonb")
+    private ProductSpecs specs;
+
+    @Convert(converter = EmbeddingConverter.class)
+    @ColumnTransformer(write = "?::vector")
+    @Column(columnDefinition = "vector(3)")
+    private float[] embedding;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategoryLink> categoryLinks = new ArrayList<>();
 
@@ -74,6 +90,19 @@ public class Product {
 
     public void changePrice(Money newPrice) {
         this.price = newPrice;
+    }
+
+    public ProductSpecs getSpecs() {
+        return specs;
+    }
+
+    public float[] getEmbedding() {
+        return embedding == null ? null : Arrays.copyOf(embedding, embedding.length);
+    }
+
+    public void updateCatalogueData(ProductSpecs newSpecs, float[] newEmbedding) {
+        this.specs = newSpecs;
+        this.embedding = newEmbedding == null ? null : Arrays.copyOf(newEmbedding, newEmbedding.length);
     }
 
     public ProductCategoryLink addToCategory(ProductCategory category, boolean primary, int displayOrder) {

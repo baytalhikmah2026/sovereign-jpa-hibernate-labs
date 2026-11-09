@@ -21,7 +21,8 @@ class TestcontainersConfiguration {
 		return new PostgreSQLContainer(POSTGRES_IMAGE)
 			.withDatabaseName("sovereign")
 			.withUsername("sovereign_app")
-			.withPassword(UUID.randomUUID().toString());
+			.withPassword(UUID.randomUUID().toString())
+			.withInitScript("db/test-extensions.sql");
 	}
 
 }
