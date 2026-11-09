@@ -1,6 +1,14 @@
 spring:
   application:
     name: sovereign-persistence
+  datasource:
+    hikari:
+      pool-name: SovereignPool
+      maximum-pool-size: 10
+      minimum-idle: 10
+      connection-timeout: 3000
+      max-lifetime: 1800000
+      leak-detection-threshold: 2000
   jpa:
     open-in-view: false
     hibernate:
