@@ -34,6 +34,9 @@ public class PurchaseOrder {
     @JoinColumn(nullable = false)
     private Customer customer;
 
+    @Column(nullable = false, length = 2)
+    private OrderStatus status = OrderStatus.NEW;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> lines = new ArrayList<>();
 
@@ -57,6 +60,13 @@ public class PurchaseOrder {
         }
     }
 
+    public void moveTo(OrderStatus next) {
+        if (!status.canMoveTo(next)) {
+            throw new IllegalStateException("Order " + orderNumber + " cannot move from " + status + " to " + next);
+        }
+        status = next;
+    }
+
     public Money total() {
         return lines.stream()
             .map(OrderLine::lineTotal)
@@ -74,6 +84,10 @@ public class PurchaseOrder {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
     }
 
     public List<OrderLine> getLines() {
