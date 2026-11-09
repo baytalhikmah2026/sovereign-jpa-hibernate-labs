@@ -13,6 +13,8 @@ spring:
       leak-detection-threshold: 2000
       data-source-properties:
         reWriteBatchedInserts: true
+        prepareThreshold: 3
+        preparedStatementCacheQueries: 256
   cloud:
     vault:
       enabled: false
@@ -32,6 +34,8 @@ spring:
         jdbc:
           batch_size: 50
         order_inserts: true
+        query:
+          plan_cache_max_size: 2048
     hibernate:
       ddl-auto: create-drop
       naming:
