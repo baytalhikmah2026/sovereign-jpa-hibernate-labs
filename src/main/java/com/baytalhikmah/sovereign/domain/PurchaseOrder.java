@@ -1,6 +1,7 @@
 package com.baytalhikmah.sovereign.domain;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.UUID;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.TimeZoneStorage;
+import org.hibernate.annotations.TimeZoneStorageType;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.generator.EventType;
 
@@ -45,6 +48,9 @@ public class PurchaseOrder {
     @Generated(event = EventType.INSERT)
     @Column(nullable = false, updatable = false)
     private Instant placedAt;
+
+    @TimeZoneStorage(TimeZoneStorageType.COLUMN)
+    private ZonedDateTime deliveryPromisedFor;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> lines = new ArrayList<>();
@@ -97,6 +103,14 @@ public class PurchaseOrder {
 
     public Instant getPlacedAt() {
         return placedAt;
+    }
+
+    public ZonedDateTime getDeliveryPromisedFor() {
+        return deliveryPromisedFor;
+    }
+
+    public void promiseDelivery(ZonedDateTime localAppointment) {
+        this.deliveryPromisedFor = localAppointment;
     }
 
     public OrderStatus getStatus() {
