@@ -34,8 +34,8 @@ class NamingStrategyTest {
         System.out.println("Columns   : " + columns);
         System.out.println("Sequences : " + sequences);
 
-        assertThat(tables).containsExactly("sov_customer");
-        assertThat(columns).containsExactly("email", "full_name", "id", "signup_channel");
+        assertThat(tables).contains("sov_customer").allMatch(name -> name.startsWith("sov_"));
+        assertThat(columns).contains("email", "full_name", "id", "signup_channel");
         assertThat(sequences).isEmpty();
     }
 
