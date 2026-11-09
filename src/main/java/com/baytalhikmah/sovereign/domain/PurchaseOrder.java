@@ -1,0 +1,83 @@
+package com.baytalhikmah.sovereign.domain;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
+public class PurchaseOrder {
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
+
+    @NotBlank
+    @Column(unique = true, length = 20)
+    private String orderNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(nullable = false)
+    private Customer customer;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderLine> lines = new ArrayList<>();
+
+    protected PurchaseOrder() {
+    }
+
+    public PurchaseOrder(String orderNumber, Customer customer) {
+        this.orderNumber = orderNumber;
+        this.customer = customer;
+    }
+
+    public OrderLine addLine(Product product, int quantity) {
+        OrderLine line = new OrderLine(this, product, quantity, product.getPrice());
+        lines.add(line);
+        return line;
+    }
+
+    public void removeLine(OrderLine line) {
+        if (lines.remove(line)) {
+            line.detachFromOrder();
+        }
+    }
+
+    public Money total() {
+        return lines.stream()
+            .map(OrderLine::lineTotal)
+            .reduce(Money::plus)
+            .orElseThrow(() -> new IllegalStateException("Order " + orderNumber + " has no lines"));
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public List<OrderLine> getLines() {
+        return Collections.unmodifiableList(lines);
+    }
+
+}
