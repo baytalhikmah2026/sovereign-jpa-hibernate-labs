@@ -90,6 +90,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategoryLink> categoryLinks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductReview> reviews = new ArrayList<>();
+
     protected Product() {
     }
 
@@ -156,6 +159,10 @@ public class Product {
 
     public List<ProductCategoryLink> getCategoryLinks() {
         return Collections.unmodifiableList(categoryLinks);
+    }
+
+    public List<ProductReview> getReviews() {
+        return Collections.unmodifiableList(reviews);
     }
 
 }
