@@ -7,6 +7,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UuidGenerator;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,6 +47,7 @@ public class ProductReview {
     private int rating;
 
     @Size(max = 2000)
+    @Basic(fetch = FetchType.LAZY)
     @Column(length = 2000)
     private String comment;
 

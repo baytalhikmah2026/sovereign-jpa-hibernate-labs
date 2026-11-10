@@ -134,6 +134,29 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.hibernate.orm</groupId>
+				<artifactId>hibernate-maven-plugin</artifactId>
+				<version>${hibernate.version}</version>
+				<executions>
+					<execution>
+						<id>enhance-entities</id>
+						<goals>
+							<goal>enhance</goal>
+						</goals>
+						<configuration>
+							<fileSets>
+								<fileSet>
+									<directory>${project.build.outputDirectory}</directory>
+									<includes>
+										<include>com/baytalhikmah/sovereign/domain/ProductReview.class</include>
+									</includes>
+								</fileSet>
+							</fileSets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
