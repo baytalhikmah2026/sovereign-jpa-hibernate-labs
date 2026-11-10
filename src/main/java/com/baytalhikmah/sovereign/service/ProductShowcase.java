@@ -49,4 +49,18 @@ public class ProductShowcase {
         return products;
     }
 
+    /** Review count per product, read through the lazy reviews list of each product. */
+    @Transactional(readOnly = true)
+    public List<String> reviewCounts(String skuPrefix) {
+        return entityManager.createQuery("""
+                select p from Product p
+                where p.sku like :prefix
+                order by p.sku""", Product.class)
+            .setParameter("prefix", skuPrefix + "%")
+            .getResultList()
+            .stream()
+            .map(product -> product.getSku() + ": " + product.getReviews().size() + " reviews")
+            .toList();
+    }
+
 }

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -91,6 +92,7 @@ public class Product {
     private List<ProductCategoryLink> categoryLinks = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
+    @BatchSize(size = 25)
     private List<ProductReview> reviews = new ArrayList<>();
 
     protected Product() {
