@@ -1,7 +1,12 @@
 package com.baytalhikmah.sovereign.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.Column;
@@ -11,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,6 +44,11 @@ public class ProductCategory {
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductCategory parent;
 
+    @OneToMany(mappedBy = "parent")
+    @Fetch(FetchMode.SUBSELECT)
+    @OrderBy("slug")
+    private List<ProductCategory> children = new ArrayList<>();
+
     protected ProductCategory() {
     }
 
@@ -59,6 +71,10 @@ public class ProductCategory {
 
     public ProductCategory getParent() {
         return parent;
+    }
+
+    public List<ProductCategory> getChildren() {
+        return Collections.unmodifiableList(children);
     }
 
     public void placeUnder(ProductCategory newParent) {
