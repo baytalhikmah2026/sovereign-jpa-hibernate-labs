@@ -1,7 +1,10 @@
 package com.baytalhikmah.sovereign.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import org.hibernate.jpa.SpecHints;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +50,26 @@ public class OrderOverview {
                 order by o.orderNumber""", PurchaseOrder.class)
             .setParameter("domain", "%" + emailDomain)
             .getResultList();
+    }
+
+    /** The same overview again: the query only filters, the named graph says what to load. */
+    @Transactional(readOnly = true)
+    public List<String> graphOverview(String emailDomain) {
+        return entityManager.createQuery("""
+                select o from PurchaseOrder o
+                where o.customer.email like :domain
+                order by o.orderNumber""", PurchaseOrder.class)
+            .setParameter("domain", "%" + emailDomain)
+            .setHint(SpecHints.HINT_SPEC_FETCH_GRAPH, entityManager.getEntityGraph(PurchaseOrder.OVERVIEW_GRAPH))
+            .getResultList()
+            .stream().map(OrderOverview::describe).toList();
+    }
+
+    /** One order by its id, loaded with the same named graph. */
+    @Transactional(readOnly = true)
+    public PurchaseOrder findForOverview(UUID orderId) {
+        return entityManager.find(PurchaseOrder.class, orderId,
+            Map.of(SpecHints.HINT_SPEC_FETCH_GRAPH, entityManager.getEntityGraph(PurchaseOrder.OVERVIEW_GRAPH)));
     }
 
     static String describe(PurchaseOrder order) {

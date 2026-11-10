@@ -23,13 +23,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(indexes = @Index(name = "sov_purchase_order_by_customer", columnList = "customer_id"))
+@NamedEntityGraph(name = PurchaseOrder.OVERVIEW_GRAPH, attributeNodes = {
+        @NamedAttributeNode("customer"),
+        @NamedAttributeNode("lines") })
 public class PurchaseOrder {
+
+    /** Fetch profile for the order overview: the order with its customer and its lines. */
+    public static final String OVERVIEW_GRAPH = "PurchaseOrder.overview";
 
     @Id
     @GeneratedValue
