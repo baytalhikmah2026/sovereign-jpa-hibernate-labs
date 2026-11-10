@@ -8,10 +8,15 @@ import org.hibernate.jpa.SpecHints;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baytalhikmah.sovereign.domain.OrderLine;
+import com.baytalhikmah.sovereign.domain.OrderLine_;
 import com.baytalhikmah.sovereign.domain.PurchaseOrder;
+import com.baytalhikmah.sovereign.domain.PurchaseOrder_;
 
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Subgraph;
 
 /** The "my orders" overview: order number, customer name and number of lines for each order. */
 @Service
@@ -70,6 +75,34 @@ public class OrderOverview {
     public PurchaseOrder findForOverview(UUID orderId) {
         return entityManager.find(PurchaseOrder.class, orderId,
             Map.of(SpecHints.HINT_SPEC_FETCH_GRAPH, entityManager.getEntityGraph(PurchaseOrder.OVERVIEW_GRAPH)));
+    }
+
+    /** List screen: each order with its customer, nothing more. */
+    @Transactional(readOnly = true)
+    public List<PurchaseOrder> ordersForListScreen(String emailDomain) {
+        EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
+        graph.addAttributeNode(PurchaseOrder_.customer);
+        return ordersWithGraph(emailDomain, graph);
+    }
+
+    /** Detail screen: each order with its customer, its lines and the product of every line. */
+    @Transactional(readOnly = true)
+    public List<PurchaseOrder> ordersForDetailScreen(String emailDomain) {
+        EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
+        graph.addAttributeNode(PurchaseOrder_.customer);
+        Subgraph<OrderLine> lines = graph.addElementSubgraph(PurchaseOrder_.lines);
+        lines.addAttributeNode(OrderLine_.product);
+        return ordersWithGraph(emailDomain, graph);
+    }
+
+    private List<PurchaseOrder> ordersWithGraph(String emailDomain, EntityGraph<PurchaseOrder> graph) {
+        return entityManager.createQuery("""
+                select o from PurchaseOrder o
+                where o.customer.email like :domain
+                order by o.orderNumber""", PurchaseOrder.class)
+            .setParameter("domain", "%" + emailDomain)
+            .setHint(SpecHints.HINT_SPEC_FETCH_GRAPH, graph)
+            .getResultList();
     }
 
     static String describe(PurchaseOrder order) {
