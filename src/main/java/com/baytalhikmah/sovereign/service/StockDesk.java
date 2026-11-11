@@ -7,6 +7,7 @@ import com.baytalhikmah.sovereign.domain.InventoryItem;
 import com.baytalhikmah.sovereign.domain.InventoryItemId;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 
 /**
@@ -33,6 +34,26 @@ public class StockDesk {
         thinkingTime.run();
         item.ship(quantity);
         entityManager.flush();
+        return levelOf(item);
+    }
+
+    /** Locks the row for writing (other writers and readers with a lock must wait), then ships. */
+    @Transactional
+    public StockLevel shipLocked(String warehouseCode, String sku, int quantity, Runnable whileLocked) {
+        InventoryItem item = entityManager.find(InventoryItem.class, new InventoryItemId(warehouseCode, sku),
+            LockModeType.PESSIMISTIC_WRITE);
+        whileLocked.run();
+        item.ship(quantity);
+        entityManager.flush();
+        return levelOf(item);
+    }
+
+    /** Locks the row for reading: other readers may lock it too, writers must wait. */
+    @Transactional
+    public StockLevel countLocked(String warehouseCode, String sku, Runnable whileLocked) {
+        InventoryItem item = entityManager.find(InventoryItem.class, new InventoryItemId(warehouseCode, sku),
+            LockModeType.PESSIMISTIC_READ);
+        whileLocked.run();
         return levelOf(item);
     }
 
