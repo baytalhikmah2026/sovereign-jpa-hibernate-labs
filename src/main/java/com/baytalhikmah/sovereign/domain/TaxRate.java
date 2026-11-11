@@ -3,6 +3,8 @@ package com.baytalhikmah.sovereign.domain;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 
 import jakarta.persistence.Column;
@@ -11,6 +13,7 @@ import jakarta.persistence.Id;
 
 @Entity
 @Immutable
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY, region = "reference")
 public class TaxRate {
 
     @Id

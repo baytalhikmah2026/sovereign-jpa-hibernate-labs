@@ -72,7 +72,7 @@ class SecondLevelCacheTest {
         assertThat(first).isEqualTo(new Reading("45.00 GBP", 1, 0, 1));
         assertThat(second).isEqualTo(new Reading("45.00 GBP", 0, 1, 0));
         assertThat(afterPriceChange).isEqualTo(new Reading("49.00 GBP", 0, 1, 0));
-        assertThat(redisKeys).contains("com.baytalhikmah.sovereign.domain.Product");
+        assertThat(redisKeys).contains("catalogue");
     }
 
     private Reading read(UUID productId, Statistics statistics) {

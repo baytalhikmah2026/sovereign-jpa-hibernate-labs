@@ -41,7 +41,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "catalogue")
 @Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
 @SqlResultSetMapping(name = "ProductSales", classes = @ConstructorResult(
         targetClass = ProductSales.class,
@@ -85,6 +85,7 @@ public class Product {
     private float[] embedding;
 
     @ElementCollection
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "catalogue_images")
     @CollectionTable(name = "product_image", joinColumns = @JoinColumn(name = "product_id"),
             indexes = @Index(name = "sov_product_image_by_product", columnList = "product_id"))
     @OrderColumn(name = "position")
