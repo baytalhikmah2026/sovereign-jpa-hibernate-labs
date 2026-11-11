@@ -1,5 +1,6 @@
 package com.baytalhikmah.sovereign.domain;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.UUID;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UuidGenerator;
+
+import com.baytalhikmah.sovereign.audit.Audited;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +28,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(indexes = @Index(name = "sov_product_category_by_parent", columnList = "parent_id"))
-public class ProductCategory {
+public class ProductCategory implements Audited {
 
     @Id
     @GeneratedValue
@@ -48,6 +51,13 @@ public class ProductCategory {
     @Fetch(FetchMode.SUBSELECT)
     @OrderBy("slug")
     private List<ProductCategory> children = new ArrayList<>();
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    @Column(length = 60)
+    private String changedBy;
 
     protected ProductCategory() {
     }
@@ -79,6 +89,25 @@ public class ProductCategory {
 
     public void placeUnder(ProductCategory newParent) {
         this.parent = newParent;
+    }
+
+    public void rename(String newName) {
+        this.name = newName;
+    }
+
+    @Override
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public String getChangedBy() {
+        return changedBy;
     }
 
 }
