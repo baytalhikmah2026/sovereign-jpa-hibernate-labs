@@ -7,6 +7,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedStoredProcedureQuery;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureParameter;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
@@ -28,6 +29,9 @@ public class InventoryItem {
     @PositiveOrZero
     private int quantityOnHand;
 
+    @Version
+    private long version;
+
     protected InventoryItem() {
     }
 
@@ -47,6 +51,10 @@ public class InventoryItem {
 
     public int getQuantityOnHand() {
         return quantityOnHand;
+    }
+
+    public long getVersion() {
+        return version;
     }
 
     public void receive(int quantity) {

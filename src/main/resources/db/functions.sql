@@ -31,8 +31,9 @@ $$;
 create or replace procedure sov_restock(p_warehouse_code varchar, p_sku varchar, p_quantity integer)
 language sql
 as $$
-    insert into sov_inventory_item (warehouse_code, sku, quantity_on_hand)
-    values (p_warehouse_code, p_sku, p_quantity)
+    insert into sov_inventory_item (warehouse_code, sku, quantity_on_hand, version)
+    values (p_warehouse_code, p_sku, p_quantity, 0)
     on conflict (warehouse_code, sku)
-    do update set quantity_on_hand = sov_inventory_item.quantity_on_hand + excluded.quantity_on_hand
+    do update set quantity_on_hand = sov_inventory_item.quantity_on_hand + excluded.quantity_on_hand,
+                  version = sov_inventory_item.version + 1
 $$;
