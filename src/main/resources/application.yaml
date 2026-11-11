@@ -12,6 +12,7 @@ spring:
       max-lifetime: 1800000
       leak-detection-threshold: 2000
       connection-init-sql: set lock_timeout = 2000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
       data-source-properties:
         reWriteBatchedInserts: true
         prepareThreshold: 3
