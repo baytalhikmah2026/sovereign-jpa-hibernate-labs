@@ -120,6 +120,10 @@ public class Product {
         return price;
     }
 
+    public void rename(String newName) {
+        this.name = newName;
+    }
+
     public void changePrice(Money newPrice) {
         this.price = newPrice;
     }
