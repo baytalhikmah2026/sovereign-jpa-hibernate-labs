@@ -33,6 +33,8 @@ spring:
           query:
             timeout: 5000
       hibernate:
+        cache:
+          use_second_level_cache: false
         jdbc:
           batch_size: 50
         order_inserts: true

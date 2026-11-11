@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -39,6 +41,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
 @SqlResultSetMapping(name = "ProductSales", classes = @ConstructorResult(
         targetClass = ProductSales.class,
