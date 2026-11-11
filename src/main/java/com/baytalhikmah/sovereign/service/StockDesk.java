@@ -1,5 +1,13 @@
 package com.baytalhikmah.sovereign.service;
 
+import java.sql.Statement;
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+
+import org.hibernate.Session;
+import org.hibernate.Timeouts;
+import org.hibernate.jpa.SpecHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +63,43 @@ public class StockDesk {
             LockModeType.PESSIMISTIC_READ);
         whileLocked.run();
         return levelOf(item);
+    }
+
+    /** Like shipLocked, but waits at most {@code maxWait} for the lock (zero = do not wait at all). */
+    @Transactional
+    public StockLevel shipWithin(String warehouseCode, String sku, int quantity, Duration maxWait) {
+        InventoryItemId id = new InventoryItemId(warehouseCode, sku);
+        InventoryItem item;
+        if (maxWait.isZero()) {
+            item = entityManager.find(InventoryItem.class, id, LockModeType.PESSIMISTIC_WRITE,
+                Map.of(SpecHints.HINT_SPEC_LOCK_TIMEOUT, Timeouts.NO_WAIT_MILLI));
+        }
+        else {
+            entityManager.unwrap(Session.class).doWork(connection -> {
+                try (Statement statement = connection.createStatement()) {
+                    statement.execute("set local lock_timeout = " + maxWait.toMillis());
+                }
+            });
+            item = entityManager.find(InventoryItem.class, id, LockModeType.PESSIMISTIC_WRITE);
+        }
+        item.ship(quantity);
+        entityManager.flush();
+        return levelOf(item);
+    }
+
+    /** Locks up to {@code max} items of a warehouse, skipping rows another transaction has locked. */
+    @Transactional
+    public List<String> claimUnlockedSkus(String warehouseCode, int max) {
+        return entityManager.createQuery(
+                "select i from InventoryItem i where i.warehouseCode = :warehouse order by i.sku", InventoryItem.class)
+            .setParameter("warehouse", warehouseCode)
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .setHint(SpecHints.HINT_SPEC_LOCK_TIMEOUT, Timeouts.SKIP_LOCKED_MILLI)
+            .setMaxResults(max)
+            .getResultList()
+            .stream()
+            .map(InventoryItem::getSku)
+            .toList();
     }
 
     static StockLevel levelOf(InventoryItem item) {

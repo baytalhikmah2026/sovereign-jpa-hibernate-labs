@@ -11,6 +11,7 @@ spring:
       connection-timeout: 3000
       max-lifetime: 1800000
       leak-detection-threshold: 2000
+      connection-init-sql: set lock_timeout = 2000
       data-source-properties:
         reWriteBatchedInserts: true
         prepareThreshold: 3
