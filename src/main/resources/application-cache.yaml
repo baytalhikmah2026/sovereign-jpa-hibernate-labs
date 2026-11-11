@@ -4,6 +4,7 @@ spring:
       hibernate:
         cache:
           use_second_level_cache: true
+          use_query_cache: true
           region:
             factory_class: com.baytalhikmah.sovereign.persistence.SovereignRedissonRegionFactory
           redisson:
@@ -18,6 +19,12 @@ spring:
                 time_to_live: 86400000
               eviction:
                 max_entries: 5000
+            catalogue_queries:
+              expiration:
+                time_to_live: 300000
+            reference_queries:
+              expiration:
+                time_to_live: 86400000
       sovereign:
         cache:
           redis-address: redis://127.0.0.1:6379
