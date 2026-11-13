@@ -1,7 +1,10 @@
 package com.baytalhikmah.sovereign.domain;
 
+import com.baytalhikmah.sovereign.persistence.StockChangeListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.NamedStoredProcedureQuery;
@@ -11,6 +14,7 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
+@EntityListeners(StockChangeListener.class)
 @IdClass(InventoryItemId.class)
 @NamedStoredProcedureQuery(name = "InventoryItem.restock", procedureName = "sov_restock", parameters = {
         @StoredProcedureParameter(name = "p_warehouse_code", mode = ParameterMode.IN, type = String.class),

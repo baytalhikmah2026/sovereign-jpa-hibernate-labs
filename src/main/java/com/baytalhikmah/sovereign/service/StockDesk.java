@@ -32,6 +32,15 @@ public class StockDesk {
     @PersistenceContext
     private EntityManager entityManager;
 
+    /** Creates the stock record of an item in a warehouse. */
+    @Transactional
+    public StockLevel register(String warehouseCode, String sku, int quantityOnHand) {
+        InventoryItem item = new InventoryItem(warehouseCode, sku, quantityOnHand);
+        entityManager.persist(item);
+        entityManager.flush();
+        return levelOf(item);
+    }
+
     /**
      * Ships stock in one transaction. {@code thinkingTime} runs after the item was read and before it is
      * changed: it stands for a user who takes a moment, during which a colleague may ship the same item.
