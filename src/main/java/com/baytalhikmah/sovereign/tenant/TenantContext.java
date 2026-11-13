@@ -27,6 +27,21 @@ public final class TenantContext {
         }
     }
 
+    /** Sets the tenant until the returned scope is closed; use it in try-with-resources. */
+    public static Scope enter(String tenant) {
+        String previous = TENANT.get();
+        TENANT.set(tenant);
+        return () -> TENANT.set(previous);
+    }
+
+    /** A tenant setting that ends when it is closed. */
+    public interface Scope extends AutoCloseable {
+
+        @Override
+        void close();
+
+    }
+
     public static void runAs(String tenant, Runnable work) {
         callAs(tenant, () -> {
             work.run();

@@ -6,10 +6,12 @@ import org.springframework.boot.hibernate.autoconfigure.HibernatePropertiesCusto
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.task.TaskDecorator;
 
 import com.baytalhikmah.sovereign.tenant.DatabaseRouter;
 import com.baytalhikmah.sovereign.tenant.ShopSchemas;
 import com.baytalhikmah.sovereign.tenant.TenantIdentifierResolver;
+import com.baytalhikmah.sovereign.tenant.TenantTaskDecorator;
 
 /**
  * With the tenancy profile, every Hibernate session works for the current tenant:
@@ -35,6 +37,12 @@ public class TenancyConfig {
             properties.put(MultiTenancySettings.MULTI_TENANT_IDENTIFIER_RESOLVER, new TenantIdentifierResolver());
             properties.put(MultiTenancySettings.MULTI_TENANT_CONNECTION_PROVIDER, databaseRouter);
         };
+    }
+
+    /** Spring Boot applies a single TaskDecorator bean to its application task executor. */
+    @Bean
+    TaskDecorator tenantTaskDecorator() {
+        return new TenantTaskDecorator();
     }
 
 }

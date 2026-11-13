@@ -1,0 +1,4 @@
+sovereign:
+  tenancy:
+    # Local development only. Real secrets come from Vault (Module 7).
+    token-secret: local-dev-only-tenant-token-secret-0001

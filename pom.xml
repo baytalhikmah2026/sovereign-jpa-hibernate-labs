@@ -32,6 +32,7 @@
 		<blaze-persistence.version>1.6.20</blaze-persistence.version>
 		<jmh.version>1.37</jmh.version>
 		<redisson.version>4.8.0</redisson.version>
+		<nimbus-jose-jwt.version>10.10</nimbus-jose-jwt.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -88,6 +89,15 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<version>${nimbus-jose-jwt.version}</version>
 		</dependency>
 
 		<dependency>
