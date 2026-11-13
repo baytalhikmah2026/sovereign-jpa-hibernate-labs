@@ -17,4 +17,14 @@ public final class SqlStates {
         return "none";
     }
 
+    /** The database's own error text (with its Detail and Where lines), however deeply it is wrapped. */
+    public static String messageOf(Throwable error) {
+        for (Throwable cause = error; cause != null; cause = cause.getCause()) {
+            if (cause instanceof SQLException sqlError) {
+                return sqlError.getMessage();
+            }
+        }
+        return String.valueOf(error);
+    }
+
 }
