@@ -37,3 +37,18 @@ services:
     image: apache/kafka:4.1.2
     ports:
       - "127.0.0.1:9092:9092"
+
+  postgres-replica:
+    image: pgvector/pgvector:0.8.7-pg18
+    user: postgres
+    command: sh /scripts/replica-start.sh
+    environment:
+      PRIMARY_HOST: postgres
+      PGPASSWORD: replica-local-only
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - ./scripts:/scripts:ro
+    depends_on:
+      postgres:
+        condition: service_healthy

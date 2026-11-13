@@ -1,0 +1,13 @@
+sovereign:
+  replica:
+    url: jdbc:postgresql://localhost:5433/sovereign
+    hikari:
+      pool-name: SovereignReplicaPool
+      maximum-pool-size: 20
+      minimum-idle: 2
+      connection-timeout: 3000
+      read-only: true
+
+decorator:
+  datasource:
+    exclude-beans: dataSource
