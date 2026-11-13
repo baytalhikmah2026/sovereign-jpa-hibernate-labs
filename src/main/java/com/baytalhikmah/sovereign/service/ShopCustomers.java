@@ -37,4 +37,10 @@ public class ShopCustomers {
         return (String) entityManager.createNativeQuery("select current_schema()").getSingleResult();
     }
 
+    /** The database the current session is connected to, as PostgreSQL sees it. */
+    @Transactional(readOnly = true)
+    public String currentDatabase() {
+        return (String) entityManager.createNativeQuery("select current_database()").getSingleResult();
+    }
+
 }
