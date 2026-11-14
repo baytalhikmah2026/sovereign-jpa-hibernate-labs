@@ -33,6 +33,7 @@
 		<jmh.version>1.37</jmh.version>
 		<redisson.version>4.8.0</redisson.version>
 		<nimbus-jose-jwt.version>10.10</nimbus-jose-jwt.version>
+		<hibernate-search.version>8.2.3.Final</hibernate-search.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,6 +99,16 @@
 			<groupId>com.nimbusds</groupId>
 			<artifactId>nimbus-jose-jwt</artifactId>
 			<version>${nimbus-jose-jwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-mapper-orm</artifactId>
+			<version>${hibernate-search.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.search</groupId>
+			<artifactId>hibernate-search-backend-lucene</artifactId>
+			<version>${hibernate-search.version}</version>
 		</dependency>
 
 		<dependency>

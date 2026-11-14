@@ -12,7 +12,16 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.RoutingBinderRef;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
 
+import com.baytalhikmah.sovereign.persistence.DepartmentRoutingBinder;
 import com.baytalhikmah.sovereign.persistence.EmbeddingConverter;
 import com.baytalhikmah.sovereign.persistence.ProductSpecsConverter;
 import com.baytalhikmah.sovereign.query.ProductSales;
@@ -41,6 +50,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Indexed(index = "products", routingBinder = @RoutingBinderRef(type = DepartmentRoutingBinder.class))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "catalogue")
 @Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
 @SqlResultSetMapping(name = "ProductSales", classes = @ConstructorResult(
@@ -61,10 +71,12 @@ public class Product {
     @NotBlank
     @Size(max = 40)
     @Column(unique = true)
+    @KeywordField(sortable = Sortable.YES)
     private String sku;
 
     @NotBlank
     @Size(max = 120)
+    @FullTextField
     private String name;
 
     @NotNull
@@ -118,6 +130,14 @@ public class Product {
 
     public String getName() {
         return name;
+    }
+
+    /** The department code: the SKU part before the first dash ("KIT" for KIT-Q76-KETTLE). Not a column. */
+    @KeywordField
+    @IndexingDependency(derivedFrom = @ObjectPath(@PropertyValue(propertyName = "sku")))
+    public String getDepartment() {
+        int dash = sku.indexOf('-');
+        return dash < 0 ? sku : sku.substring(0, dash);
     }
 
     public Money getPrice() {

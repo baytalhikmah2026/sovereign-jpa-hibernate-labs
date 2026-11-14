@@ -35,6 +35,8 @@ spring:
       hibernate:
         cache:
           use_second_level_cache: false
+        search:
+          enabled: false
         jdbc:
           batch_size: 50
         order_inserts: true
