@@ -2,6 +2,7 @@ services:
 
   postgres:
     image: pgvector/pgvector:0.8.7-pg18
+    command: postgres -c wal_level=logical
     environment:
       POSTGRES_DB: sovereign
       POSTGRES_USER: sovereign_admin
@@ -35,8 +36,38 @@ services:
 
   kafka:
     image: apache/kafka:4.1.2
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: HOST://:9092,DOCKER://:19092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: HOST://localhost:9092,DOCKER://kafka:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: HOST:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     ports:
       - "127.0.0.1:9092:9092"
+
+  connect:
+    image: quay.io/debezium/connect:3.7.1.Final
+    environment:
+      BOOTSTRAP_SERVERS: kafka:19092
+      GROUP_ID: sovereign-connect
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      STATUS_STORAGE_TOPIC: connect_statuses
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+    ports:
+      - "127.0.0.1:8083:8083"
+    depends_on:
+      - kafka
+      - postgres
 
   postgres-replica:
     image: pgvector/pgvector:0.8.7-pg18
