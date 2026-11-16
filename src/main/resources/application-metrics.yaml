@@ -1,0 +1,13 @@
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.hibernate.autoconfigure.metrics.HibernateMetricsAutoConfiguration
+  jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
