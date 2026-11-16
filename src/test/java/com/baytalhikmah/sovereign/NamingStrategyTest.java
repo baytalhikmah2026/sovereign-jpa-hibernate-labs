@@ -36,7 +36,7 @@ class NamingStrategyTest {
 
         assertThat(tables).contains("sov_customer").allMatch(name -> name.startsWith("sov_"));
         assertThat(columns).contains("email", "full_name", "id", "signup_channel");
-        assertThat(sequences).containsExactly("sov_stock_movement_seq");
+        assertThat(sequences).contains("sov_stock_movement_seq").allMatch(name -> name.startsWith("sov_"));
     }
 
 }

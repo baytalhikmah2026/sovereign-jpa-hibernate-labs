@@ -23,11 +23,18 @@ spring:
   sql:
     init:
       mode: always
-      schema-locations: classpath:db/functions.sql
+      schema-locations:
+        - classpath:db/functions.sql
+        - classpath:db/audit-indexes.sql
   jpa:
     defer-datasource-initialization: true
     open-in-view: false
     properties:
+      org:
+        hibernate:
+          envers:
+            store_data_at_delete: true
+            revision_on_collection_change: false
       jakarta:
         persistence:
           query:

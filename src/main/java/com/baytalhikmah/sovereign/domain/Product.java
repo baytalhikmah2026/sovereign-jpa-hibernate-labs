@@ -12,6 +12,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.search.engine.backend.types.Sortable;
 import org.hibernate.search.mapper.pojo.bridge.mapping.annotation.RoutingBinderRef;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
@@ -50,6 +52,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
+@Audited
 @Indexed(index = "products", routingBinder = @RoutingBinderRef(type = DepartmentRoutingBinder.class))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "catalogue")
 @Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
@@ -86,11 +89,13 @@ public class Product {
     @AttributeOverride(name = "currency", column = @Column(name = "price_currency", length = 3, nullable = false))
     private Money price;
 
+    @NotAudited
     @Convert(converter = ProductSpecsConverter.class)
     @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "jsonb")
     private ProductSpecs specs;
 
+    @NotAudited
     @Convert(converter = EmbeddingConverter.class)
     @ColumnTransformer(write = "?::vector")
     @Column(columnDefinition = "vector(3)")
@@ -104,9 +109,11 @@ public class Product {
     @Column(name = "image_url", nullable = false, length = 300)
     private List<String> imageUrls = new ArrayList<>();
 
+    @NotAudited
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductCategoryLink> categoryLinks = new ArrayList<>();
 
+    @NotAudited
     @OneToMany(mappedBy = "product")
     @BatchSize(size = 25)
     private List<ProductReview> reviews = new ArrayList<>();
