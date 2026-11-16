@@ -20,6 +20,9 @@ spring:
   cloud:
     vault:
       enabled: false
+  flyway:
+    schemas: compliance
+    locations: classpath:db/migration
   sql:
     init:
       mode: always
@@ -40,6 +43,8 @@ spring:
           query:
             timeout: 5000
       hibernate:
+        hbm2ddl:
+          schema_filter_provider: com.baytalhikmah.sovereign.persistence.ComplianceSchemaFilter
         cache:
           use_second_level_cache: false
         search:
