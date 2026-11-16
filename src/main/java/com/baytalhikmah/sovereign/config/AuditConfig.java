@@ -7,16 +7,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.baytalhikmah.sovereign.audit.AuditStampInterceptor;
 import com.baytalhikmah.sovereign.audit.SqlTraceInspector;
+import com.baytalhikmah.sovereign.audit.TamperEvidentLog;
+import com.baytalhikmah.sovereign.audit.WriteTrailInterceptor;
 
-/** Registers the global audit interceptor, and the SQL trace comments when the sql-trace profile is active. */
+/**
+ * Registers the global interceptor (audit stamps + tamper-evident write log), and the SQL trace comments when the
+ * sql-trace profile is active.
+ */
 @Configuration(proxyBeanMethods = false)
 public class AuditConfig {
 
     @Bean
-    HibernatePropertiesCustomizer auditStampInterceptor() {
-        return properties -> properties.put(SessionEventSettings.INTERCEPTOR, new AuditStampInterceptor());
+    HibernatePropertiesCustomizer writeTrailInterceptor(TamperEvidentLog writeLog) {
+        return properties -> properties.put(SessionEventSettings.INTERCEPTOR, new WriteTrailInterceptor(writeLog));
     }
 
     @Bean

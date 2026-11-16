@@ -40,3 +40,7 @@ build/
 
 ### Client certificates (written by scripts/enable-tls.sh) ###
 /certs/
+
+### Write log segments and their write-once copies (Lab 92) ###
+/logs/
+/worm/

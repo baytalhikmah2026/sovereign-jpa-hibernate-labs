@@ -90,3 +90,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  audit-shipper:
+    image: alpine:3.22
+    command: sh /scripts/audit-shipper.sh
+    volumes:
+      - ./scripts:/scripts:ro
+      - ./logs/audit:/audit:ro
+      - ./worm:/worm

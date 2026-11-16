@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Every %m (the message) in Spring Boot's log pattern goes through the masking converter first. -->
+    <conversionRule conversionWord="m" class="com.baytalhikmah.sovereign.audit.MaskingMessageConverter"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
