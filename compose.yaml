@@ -69,6 +69,12 @@ services:
       - kafka
       - postgres
 
+  jaeger:
+    image: jaegertracing/jaeger:2.23.0
+    ports:
+      - "127.0.0.1:16686:16686"
+      - "127.0.0.1:4318:4318"
+
   postgres-replica:
     image: pgvector/pgvector:0.8.7-pg18
     user: postgres
