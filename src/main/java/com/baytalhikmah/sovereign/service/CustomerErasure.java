@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baytalhikmah.sovereign.domain.Customer;
+import com.baytalhikmah.sovereign.domain.CustomerIdentity;
 import com.baytalhikmah.sovereign.domain.EmailNotice;
 import com.baytalhikmah.sovereign.domain.ProductReview;
 import com.baytalhikmah.sovereign.domain.PurchaseOrder;
@@ -49,6 +50,7 @@ public class CustomerErasure {
 
     private static final Map<Class<?>, Rule> RULES = Map.of(
             PurchaseOrder.class, new Rule(Action.KEEP_ANONYMISED, "sov_purchase_order", "customer_id"),
+            CustomerIdentity.class, new Rule(Action.DELETE_ROWS, "sov_customer_identity", "customer_id"),
             ProductReview.class, new Rule(Action.DELETE_ROWS, "sov_product_review", "customer_id"),
             EmailNotice.class, new Rule(Action.DELETE_ROWS, "sov_email_notice", "customer_id"),
             SmsNotice.class, new Rule(Action.DELETE_ROWS, "sov_sms_notice", "customer_id"));
@@ -115,6 +117,7 @@ public class CustomerErasure {
         long remaining = count("""
                 select (select count(*) from sov_customer where id = :id and (email = :email or full_name = :name))
                      + (select count(*) from sov_customer_loyalty where customer_id = :id)
+                     + (select count(*) from sov_customer_identity where customer_id = :id)
                      + (select count(*) from sov_product_review where customer_id = :id)
                      + (select count(*) from sov_email_notice where customer_id = :id or email_address = :email)
                      + (select count(*) from sov_sms_notice where customer_id = :id)
