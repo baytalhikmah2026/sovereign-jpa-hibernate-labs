@@ -131,4 +131,14 @@ public class Customer {
         this.shippingAddress = shipping;
     }
 
+    /** GDPR erasure: replaces every personal field; the row stays so that kept records (orders) still point to it. */
+    public void anonymise(String placeholderName, String placeholderEmail) {
+        this.fullName = placeholderName;
+        this.email = placeholderEmail;
+        this.billingAddress = null;
+        this.shippingAddress = null;
+        this.loyaltyTier = null;
+        this.loyaltyPoints = null;
+    }
+
 }
