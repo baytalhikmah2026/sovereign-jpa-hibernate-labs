@@ -1,7 +1,12 @@
 package com.baytalhikmah.sovereign.service;
 
+import java.util.List;
+
 import com.baytalhikmah.sovereign.domain.RegionalStock;
 import com.baytalhikmah.sovereign.persistence.TransactionRetry;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 
 /** Reserves regional stock in the distributed cluster; conflicting reservations are retried, never lost. */
 public class GlobalStockDesk {
@@ -61,6 +66,52 @@ public class GlobalStockDesk {
                 .setParameter("region", region)
                 .getSingleResult();
         });
+    }
+
+    /**
+     * The checkout path: the stock row is locked when it is read (SELECT ... FOR UPDATE), so concurrent buyers of the
+     * same product queue for the row instead of colliding and retrying.
+     */
+    public int reserveForCheckout(String sku, String region, int units) {
+        return transactions.run(entityManager -> {
+            RegionalStock stock = find(entityManager, sku, region, LockModeType.PESSIMISTIC_WRITE);
+            stock.reserve(units);
+            return stock.getQuantity();
+        });
+    }
+
+    /** Compensation: gives reserved units back when the rest of the checkout failed. */
+    public int release(String sku, String region, int units) {
+        return transactions.run(entityManager -> {
+            RegionalStock stock = find(entityManager, sku, region, LockModeType.PESSIMISTIC_WRITE);
+            stock.release(units);
+            return stock.getQuantity();
+        });
+    }
+
+    /** Registers the stock row only if it does not exist yet; returns the current quantity. */
+    public int ensureStock(String sku, String region, String countryCode, int quantity) {
+        return transactions.run(entityManager -> {
+            List<RegionalStock> existing = entityManager.createQuery(
+                    "select s from RegionalStock s where s.sku = :sku and s.region = :region", RegionalStock.class)
+                .setParameter("sku", sku)
+                .setParameter("region", region)
+                .getResultList();
+            if (!existing.isEmpty()) {
+                return existing.getFirst().getQuantity();
+            }
+            entityManager.persist(new RegionalStock(sku, region, countryCode, quantity));
+            return quantity;
+        });
+    }
+
+    private static RegionalStock find(EntityManager entityManager, String sku, String region, LockModeType lock) {
+        return entityManager.createQuery(
+                "select s from RegionalStock s where s.sku = :sku and s.region = :region", RegionalStock.class)
+            .setParameter("sku", sku)
+            .setParameter("region", region)
+            .setLockMode(lock)
+            .getSingleResult();
     }
 
 }

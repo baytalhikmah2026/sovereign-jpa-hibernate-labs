@@ -73,4 +73,9 @@ public class RegionalStock {
         quantity -= units;
     }
 
+    /** Puts units back, for example when the order that reserved them could not be placed. */
+    public void release(int units) {
+        quantity += units;
+    }
+
 }
