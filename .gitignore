@@ -37,3 +37,6 @@ build/
 
 ### Database snapshots (written by scripts/db-snapshot.sh) ###
 /snapshots/
+
+### Client certificates (written by scripts/enable-tls.sh) ###
+/certs/

@@ -13,3 +13,11 @@ path "secret/data/application" {
 path "secret/data/application/*" {
   capabilities = ["read"]
 }
+
+path "transit/encrypt/sovereign-fields" {
+  capabilities = ["update"]
+}
+
+path "transit/decrypt/sovereign-fields" {
+  capabilities = ["update"]
+}

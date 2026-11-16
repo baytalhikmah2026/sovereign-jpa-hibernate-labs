@@ -12,6 +12,7 @@ services:
     volumes:
       - ./scripts:/scripts:ro
       - ./snapshots:/snapshots
+      - ./certs:/certs
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "sovereign_admin", "-d", "sovereign"]
       interval: 5s
