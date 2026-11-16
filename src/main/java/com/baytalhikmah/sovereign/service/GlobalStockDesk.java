@@ -47,4 +47,20 @@ public class GlobalStockDesk {
             .getSingleResult());
     }
 
+    /**
+     * Follower read: answered by the nearest copy of the data as it was a few seconds ago, without asking the
+     * region that holds the lease. Fast everywhere; use it where slightly old numbers are fine (shop pages, reports).
+     */
+    public int quantityNearby(String sku, String region) {
+        return transactions.run(entityManager -> {
+            entityManager.createNativeQuery("set transaction as of system time follower_read_timestamp()")
+                .executeUpdate();
+            return entityManager.createQuery(
+                    "select s.quantity from RegionalStock s where s.sku = :sku and s.region = :region", Integer.class)
+                .setParameter("sku", sku)
+                .setParameter("region", region)
+                .getSingleResult();
+        });
+    }
+
 }

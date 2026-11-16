@@ -117,3 +117,16 @@ services:
     command: start --insecure --join=crdb1:26257,crdb2:26257,crdb3:26257 --advertise-addr=crdb3:26257 --locality=region=ap-south --cache=.25 --max-sql-memory=.25
     ports:
       - "127.0.0.1:26259:26257"
+
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.13.0
+    command: -host=0.0.0.0 -config=/scripts/toxiproxy.json
+    ports:
+      - "127.0.0.1:8474:8474"
+      - "127.0.0.1:26358:26358"
+      - "127.0.0.1:26359:26359"
+    volumes:
+      - ./scripts:/scripts:ro
+    depends_on:
+      - crdb2
+      - crdb3

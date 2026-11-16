@@ -1,5 +1,10 @@
 sovereign:
   global:
-    url: jdbc:postgresql://localhost:26257/sovereign_global?sslmode=disable
+    database: sovereign_global
     username: root
     password: ""
+    # One gateway node per region. us-east and ap-south go through Toxiproxy, which adds the distance.
+    endpoints:
+      eu-west: localhost:26257
+      us-east: localhost:26358
+      ap-south: localhost:26359

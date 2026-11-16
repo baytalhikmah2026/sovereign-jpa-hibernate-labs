@@ -1,0 +1,14 @@
+[
+  {
+    "name": "crdb-us-east",
+    "listen": "0.0.0.0:26358",
+    "upstream": "crdb2:26257",
+    "enabled": true
+  },
+  {
+    "name": "crdb-ap-south",
+    "listen": "0.0.0.0:26359",
+    "upstream": "crdb3:26257",
+    "enabled": true
+  }
+]
