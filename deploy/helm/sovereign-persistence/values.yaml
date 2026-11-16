@@ -1,0 +1,29 @@
+# Settings of the chart. Change them with --set or a values file; nothing here is secret.
+replicaCount: 1
+
+image:
+  repository: sovereign-persistence
+  tag: lab-85
+  pullPolicy: IfNotPresent
+
+database:
+  image: pgvector/pgvector:0.8.7-pg18
+  name: sovereign
+  user: sovereign_app
+  storage: 1Gi
+
+# Hibernate and HikariCP tuning, written into the ConfigMap as application-k8s.yaml.
+persistence:
+  hikari:
+    maximumPoolSize: 5
+    minimumIdle: 2
+    connectionTimeout: 3000
+  jdbcBatchSize: 50
+  ddlAuto: update
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    memory: 768Mi

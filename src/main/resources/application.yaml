@@ -47,6 +47,15 @@ spring:
       naming:
         physical-strategy: com.baytalhikmah.sovereign.persistence.SovereignNamingStrategy
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db,persistence
+
 decorator:
   datasource:
     p6spy:

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-app-config
+data:
+  application-k8s.yaml: |
+    spring:
+      datasource:
+        url: jdbc:postgresql://{{ .Release.Name }}-postgres:5432/{{ .Values.database.name }}
+        hikari:
+          maximum-pool-size: {{ .Values.persistence.hikari.maximumPoolSize }}
+          minimum-idle: {{ .Values.persistence.hikari.minimumIdle }}
+          connection-timeout: {{ .Values.persistence.hikari.connectionTimeout }}
+      jpa:
+        hibernate:
+          ddl-auto: {{ .Values.persistence.ddlAuto }}
+        properties:
+          hibernate:
+            jdbc:
+              batch_size: {{ .Values.persistence.jdbcBatchSize }}
+    management:
+      endpoint:
+        health:
+          group:
+            readiness:
+              show-details: always
+            liveness:
+              show-details: always
