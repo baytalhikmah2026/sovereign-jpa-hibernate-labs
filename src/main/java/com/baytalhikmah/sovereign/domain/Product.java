@@ -52,7 +52,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Audited
+@Audited(withModifiedFlag = true)
 @Indexed(index = "products", routingBinder = @RoutingBinderRef(type = DepartmentRoutingBinder.class))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "catalogue")
 @Table(indexes = @Index(name = "sov_product_by_name_id", columnList = "name, id"))
