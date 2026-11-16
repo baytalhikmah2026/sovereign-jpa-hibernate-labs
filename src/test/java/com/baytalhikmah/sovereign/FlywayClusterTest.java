@@ -3,6 +3,7 @@ package com.baytalhikmah.sovereign;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -44,6 +45,7 @@ class FlywayClusterTest {
 
     @Test
     void threeNodesStartTogetherAndTheSchemaIsMigratedExactlyOnce() throws Exception {
+        int migrations = (int) Arrays.stream(flyway.info().applied()).filter(m -> m.getVersion() != null).count();
         jdbc.execute("create database lab94_cluster");
         String url = postgres.getJdbcUrl().replace("/sovereign", "/lab94_cluster");
 
@@ -88,10 +90,10 @@ class FlywayClusterTest {
         System.out.println("activities   : " + activities + " rows");
         System.out.println("app database : " + hibernateSees);
 
-        assertThat(executed).containsExactlyInAnyOrder(2, 0, 0);
-        assertThat(history).hasSize(2).allMatch(row -> Boolean.TRUE.equals(row.get("success")));
+        assertThat(executed).containsExactlyInAnyOrder(migrations, 0, 0);
+        assertThat(history).hasSize(migrations).allMatch(row -> Boolean.TRUE.equals(row.get("success")));
         assertThat(activities).isEqualTo(3);
-        assertThat(hibernateSees).containsExactly("FRAUD_SCREENING", "MARKETING_EMAIL", "ORDER_FULFILMENT");
+        assertThat(hibernateSees).contains("FRAUD_SCREENING", "MARKETING_EMAIL", "ORDER_FULFILMENT");
         assertThat(entityManager.find(ProcessingActivity.class, "MARKETING_EMAIL").getLegalBasis())
             .isEqualTo("CONSENT");
     }

@@ -1,0 +1,4 @@
+# Release 3 of the dpo_email change: also run the contract migrations.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/contract
