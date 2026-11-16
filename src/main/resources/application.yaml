@@ -29,6 +29,7 @@ spring:
       schema-locations:
         - classpath:db/functions.sql
         - classpath:db/audit-indexes.sql
+        - classpath:db/vector-indexes.sql
   jpa:
     defer-datasource-initialization: true
     open-in-view: false

@@ -7,10 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.Array;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
@@ -22,9 +24,9 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDe
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.ObjectPath;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.PropertyValue;
+import org.hibernate.type.SqlTypes;
 
 import com.baytalhikmah.sovereign.persistence.DepartmentRoutingBinder;
-import com.baytalhikmah.sovereign.persistence.EmbeddingConverter;
 import com.baytalhikmah.sovereign.persistence.ProductSpecsConverter;
 import com.baytalhikmah.sovereign.query.ProductSales;
 
@@ -96,9 +98,8 @@ public class Product {
     private ProductSpecs specs;
 
     @NotAudited
-    @Convert(converter = EmbeddingConverter.class)
-    @ColumnTransformer(write = "?::vector")
-    @Column(columnDefinition = "vector(3)")
+    @JdbcTypeCode(SqlTypes.VECTOR)
+    @Array(length = 3)
     private float[] embedding;
 
     @ElementCollection
