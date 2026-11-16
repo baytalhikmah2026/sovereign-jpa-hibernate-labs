@@ -1,0 +1,5 @@
+sovereign:
+  global:
+    url: jdbc:postgresql://localhost:26257/sovereign_global?sslmode=disable
+    username: root
+    password: ""

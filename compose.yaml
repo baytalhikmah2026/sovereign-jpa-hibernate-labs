@@ -98,3 +98,22 @@ services:
       - ./scripts:/scripts:ro
       - ./logs/audit:/audit:ro
       - ./worm:/worm
+
+  crdb1:
+    image: cockroachdb/cockroach:v26.3.5
+    command: start --insecure --join=crdb1:26257,crdb2:26257,crdb3:26257 --advertise-addr=crdb1:26257 --locality=region=eu-west --cache=.25 --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26257:26257"
+      - "127.0.0.1:8090:8080"
+
+  crdb2:
+    image: cockroachdb/cockroach:v26.3.5
+    command: start --insecure --join=crdb1:26257,crdb2:26257,crdb3:26257 --advertise-addr=crdb2:26257 --locality=region=us-east --cache=.25 --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26258:26257"
+
+  crdb3:
+    image: cockroachdb/cockroach:v26.3.5
+    command: start --insecure --join=crdb1:26257,crdb2:26257,crdb3:26257 --advertise-addr=crdb3:26257 --locality=region=ap-south --cache=.25 --max-sql-memory=.25
+    ports:
+      - "127.0.0.1:26259:26257"
