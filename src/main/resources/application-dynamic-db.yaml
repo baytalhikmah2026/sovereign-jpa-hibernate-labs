@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    vault:
+      database:
+        enabled: true
+        backend: database
+        role: sovereign-app-dynamic
+      config:
+        lifecycle:
+          enabled: true
+          min-renewal: 10s
+          expiry-threshold: 30s
